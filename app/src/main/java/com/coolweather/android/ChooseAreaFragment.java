@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -83,10 +84,17 @@ public class ChooseAreaFragment extends Fragment {
                     queryCounties();
                 }else if(currentLevel == LEVEL_COUNTY){
                     String weatherId = countyList.get(position).getWeatherId();
+                    if(getActivity() instanceof MainActivity){
                     Intent intent = new Intent(getActivity(),activity_weather.class);
                     intent.putExtra("weather_id",weatherId);
                     startActivity(intent);
                     getActivity().finish();
+                    }else if(getActivity() instanceof activity_weather){
+                        activity_weather activity = (activity_weather) getActivity();
+                        activity.drawerLayout.closeDrawers();
+                        activity.swipeRefresh.setRefreshing(true);
+                        activity.requestWeather(weatherId);
+                    }
                 }
             }
         });
@@ -163,7 +171,6 @@ public class ChooseAreaFragment extends Fragment {
 
     //根据传入的地址和类型从服务器上查询省市县数据
     private void queryFromServer(String address,final String type){
-        Log.d("duanw", "queryFromServer: "+address+"  type:"+type);
         showProgressDialog();
         HttpUtil.sendOkHttpRequest(address, new Callback() {
             @Override
