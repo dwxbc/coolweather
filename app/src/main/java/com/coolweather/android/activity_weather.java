@@ -1,5 +1,6 @@
 package com.coolweather.android;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.coolweather.android.gson.Forecast;
 import com.coolweather.android.gson.Weather;
+import com.coolweather.android.service.AutoUpdateServices;
 import com.coolweather.android.util.HttpUtil;
 import com.coolweather.android.util.Utility;
 
@@ -77,6 +79,7 @@ public class activity_weather extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawer_layout);
         navButton = findViewById(R.id.nav_button);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Log.d("duanw", "onCreate: "+"prefs的实例是:"+prefs.hashCode());
         String weatherString = prefs.getString("weather",null);
         final String weatherId;
         if(weatherString != null){
@@ -189,6 +192,11 @@ public class activity_weather extends AppCompatActivity {
         carWashText.setText(carWash);
         sportText.setText(sport);
         weatherLayout.setVisibility(View.VISIBLE);
+        //启动后台更新数据服务
+        Intent intent = new Intent(this, AutoUpdateServices.class);
+        startService(intent);
+
+
     }
     /**
      * 加载必应每日一图
